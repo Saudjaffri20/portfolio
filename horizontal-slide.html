@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide</title>
+</head>
+
+<style>
+    html,
+    body {
+        margin: 0;
+        font-family: sans-serif;
+    }
+    
+    main {
+        overflow-x: hidden;
+        display: flex;
+    }
+    
+    h1 {
+        margin: 0;
+        padding: 0;
+    }
+    
+    section {
+        min-width: 100vw;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 4ch;
+        transition: all .3s ease-in-out;
+    }
+    
+    section:nth-child(even) {
+        background-color: teal;
+        color: white;
+    }
+    
+    section:nth-child(odd) {
+        background-color: gray;
+        color: white;
+    }
+    
+    ul {
+        width: 100%;
+        display: flex;
+        position: fixed;
+        bottom: 10vh;
+        justify-content: center;
+        align-items: center;
+        gap: 30px;
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        color: #fff;
+        z-index: 99999;
+    }
+    
+    li a {
+        color: #fff;
+    }
+</style>
+
+<body>
+
+
+    <main>
+        <ul>
+            <li>
+                <a href="#sec-1">Beep</a>
+            </li>
+            <li>
+                <a href="#sec-2">Boop</a>
+            </li>
+            <li>
+                <a href="#sec-3">Boooom</a>
+            </li>
+            <li>
+                <a href="#sec-4">The End</a>
+            </li>
+        </ul>
+        <section id="sec-1">
+            <h1>Beep</h1>
+        </section>
+        <section id="sec-2">
+            <h1>Boop</h1>
+        </section>
+        <section id="sec-3">
+            <h1>Boooom</h1>
+        </section>
+        <section id="sec-4">
+            <h1>The End</h1>
+        </section>
+    </main>
+
+
+
+
+    <script>
+        const scrollContainer = document.querySelector("main");
+
+        scrollContainer.addEventListener("wheel", (evt) => {
+            evt.preventDefault();
+            scrollContainer.scrollLeft += evt.deltaY;
+        });
+    </script>
+
+</body>
+
+</html>

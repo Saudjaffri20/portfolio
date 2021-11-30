@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide</title>
+</head>
+
+<style>
+    .container {
+        width: 600%;
+        height: 100%;
+        display: flex;
+        flex-wrap: no-wrap;
+    }
+    
+    .panel {
+        will-change: transform;
+    }
+</style>
+
+<body>
+
+
+
+    <div class="container">
+        <div class="description panel blue">
+            <div>
+                <h1>Horizontal snapping sections (advanced)</h1>
+                <p>Scroll vertically to scrub the horizontal animation. It also dynamically snaps to the sections in an organic way based on the velocity. The snapping occurs based on the natural ending position after momentum is applied, not a simplistic
+                    "wherever it is when the user stops". The fading/scaling happens at a consistent rate, not based on how fast you scroll.</p>
+                <div class="scroll-down">Scroll down
+                    <div class="arrow"></div>
+                </div>
+            </div>
+        </div>
+
+
+        <section class="panel red">
+            ONE
+        </section>
+        <section class="panel orange">
+            TWO
+        </section>
+        <section class="panel purple">
+            THREE
+        </section>
+        <section class="panel green">
+            FOUR
+        </section>
+        <section class="panel gray">
+            FIVE
+        </section>
+
+    </div>
+
+
+    <header>
+        <a href="https://greensock.com/scrolltrigger">
+            <img class="greensock-icon" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/scroll-trigger-logo-light.svg" width="200" height="64" />
+        </a>
+    </header>
+
+
+
+
+    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/gsap-latest-beta.min.js?r=5426"></script>
+    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/ScrollTrigger.min.jshttps://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/ScrollTrigger.min.js"></script>
+    <script src="https://codepen.io/GreenSock/pen/7ba936b34824fefdccfe2c6d9f0b740b"></script>
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        let duration = 10,
+            sections = gsap.utils.toArray(".panel"),
+            sectionIncrement = duration / (sections.length - 1),
+            tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: ".container",
+                    pin: true,
+                    scrub: 1,
+                    snap: 1 / (sections.length - 1),
+                    start: "top top",
+                    end: "+=5000"
+                }
+            });
+
+        tl.to(sections, {
+            xPercent: -100 * (sections.length - 1),
+            duration: duration,
+            ease: "none"
+        });
+        sections.forEach((section, index) => {
+            let tween = gsap.from(section, {
+                opacity: 0,
+                scale: 0.6,
+                duration: 1,
+                force3D: true,
+                paused: true
+            });
+            addSectionCallbacks(tl, {
+                start: sectionIncrement * (index - 0.99),
+                end: sectionIncrement * (index + 0.99),
+                onEnter: () => tween.play(),
+                onLeave: () => tween.reverse(),
+                onEnterBack: () => tween.play(),
+                onLeaveBack: () => tween.reverse()
+            });
+            index || tween.progress(1);
+        });
+
+
+        function addSectionCallbacks(timeline, {
+            start,
+            end,
+            param,
+            onEnter,
+            onLeave,
+            onEnterBack,
+            onLeaveBack
+        }) {
+            let trackDirection = animation => {
+                    let onUpdate = animation.eventCallback("onUpdate"),
+                        prevTime = animation.time();
+                    animation.direction = animation.reversed() ? -1 : 1;
+                    animation.eventCallback("onUpdate", () => {
+                        let time = animation.time();
+                        if (prevTime !== time) {
+                            animation.direction = time < prevTime ? -1 : 1;
+                            prevTime = time;
+                        }
+                        onUpdate && onUpdate.call(animation);
+                    });
+                },
+                empty = v => v;
+            timeline.direction || trackDirection(timeline);
+            start >= 0 && timeline.add(() => ((timeline.direction < 0 ? onLeaveBack : onEnter) || empty)(param), start);
+            end <= timeline.duration() && timeline.add(() => ((timeline.direction < 0 ? onEnterBack : onLeave) || empty)(param), end);
+        }
+    </script>
+
+</body>
+
+</html>
